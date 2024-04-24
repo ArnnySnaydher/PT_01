@@ -24,4 +24,9 @@ create or replace PROCEDURE SP_HOSPITAL_ELIMINAR
         ELSE
             DBMS_OUTPUT.PUT_LINE('No se encontró ningún hospital con el ID proporcionado');
       END IF;
+      
+    --Caputar exception no validado anteriormente
+    EXCEPTION
+    WHEN OTHERS THEN
+        RAISE;
 END ;

@@ -12,6 +12,7 @@ create or replace PROCEDURE SP_HOSPITAL_ACTUALIZAR
           cursor c_distrito is select descDistrito from Distrito where idDistrito = sp_idDistrito;
           cursor c_condicion is select descCondicion from Condicion where idCondicion = sp_idCondicion;
           
+          --Declaracion de variables de asignacion
           v_descSede Sede.descSede%TYPE;
           v_descGerente Gerente.descGerente%TYPE;
           v_descDistrito Distrito.descDistrito%TYPE;
@@ -24,6 +25,8 @@ create or replace PROCEDURE SP_HOSPITAL_ACTUALIZAR
       
         -- Validar si se está modificando el idGerente
         SELECT idGerente,nombre INTO v_idGerente,v_nombreGerente FROM Hospital WHERE idHospital = sp_idHospital;
+        
+        --Existencia de valor unico Gerente
         IF sp_idGerente != v_idGerente  THEN
             SELECT COUNT(*) INTO v_count FROM Hospital WHERE idGerente = sp_idGerente;
                 IF v_count > 0 THEN
@@ -31,6 +34,7 @@ create or replace PROCEDURE SP_HOSPITAL_ACTUALIZAR
                 END IF;
         END IF;
         
+        --Validacion de existencia de datos por bloques
         BEGIN
         SELECT descSede INTO v_descSede FROM Sede WHERE idSede = sp_idSede;
             EXCEPTION
@@ -74,7 +78,7 @@ create or replace PROCEDURE SP_HOSPITAL_ACTUALIZAR
             DBMS_OUTPUT.PUT_LINE('No se encontró ningún hospital con el ID proporcionado');
         END IF;
 
-        
+        --Recorrido de Cursores para mostrar resultados
         for f_sede in c_sede loop
             dbms_output.put_line('Sede : ' || f_sede.descSede);
         end loop;
@@ -91,6 +95,7 @@ create or replace PROCEDURE SP_HOSPITAL_ACTUALIZAR
             dbms_output.put_line('Valor recuperado: ' || f_condicion.descCondicion);
         end loop;
         
+        --Caputar exception no validado anteriormente
         EXCEPTION
             WHEN OTHERS THEN
              RAISE_APPLICATION_ERROR(-20002, 'ID Hospital no encontrada');

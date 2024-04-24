@@ -1,9 +1,10 @@
-CREATE OR REPLACE PROCEDURE SP_CONSULTAR_HOSPITALES
+create or replace PROCEDURE SP_CONSULTAR_HOSPITALES
+    --Definicion de los parametros de entrada
     (sp_consulta NUMBER)
 IS
 BEGIN
     IF sp_consulta = 1 THEN
-        
+
         FOR i IN (
             SELECT H.idHospital, H.Nombre, H.idDistrito
             FROM Hospital H
@@ -14,25 +15,25 @@ BEGIN
             DBMS_OUTPUT.PUT_LINE('ID Hospital: ' || i.idHospital || ', Nombre: ' || i.Nombre || ', ID Distrito: ' || i.idDistrito);
         END LOOP;
     ELSIF sp_consulta = 2 THEN
-        
+
         FOR i IN (
             SELECT *
             FROM Hospital
-            WHERE Nombre LIKE '%NACIONAL%'
+            WHERE UPPER(Nombre) LIKE '%nacional%'
         ) LOOP
             DBMS_OUTPUT.PUT_LINE('ID Hospital: ' || i.idHospital || ', Nombre: ' || i.Nombre || ', ID Distrito: ' || i.idDistrito);
         END LOOP;
     ELSIF sp_consulta = 3 THEN
-       
+
         FOR i IN (
             SELECT *
             FROM Hospital
-            WHERE Nombre LIKE '%a'
+            WHERE LOWER(Nombre) LIKE '%a'
         ) LOOP
             DBMS_OUTPUT.PUT_LINE('ID Hospital: ' || i.idHospital || ', Nombre: ' || i.Nombre || ', ID Distrito: ' || i.idDistrito);
         END LOOP;
     ELSIF sp_consulta = 4 THEN
-        
+
         FOR i IN (
             SELECT UPPER(Nombre) AS Nombre_Mayuscula
             FROM Hospital
@@ -40,7 +41,7 @@ BEGIN
             DBMS_OUTPUT.PUT_LINE('Nombre en mayúsculas: ' || i.Nombre_Mayuscula);
         END LOOP;
     ELSIF sp_consulta = 5 THEN
-        
+
         FOR i IN (
             SELECT P.descProvincia, COUNT(H.idHospital) AS Numero_Hospitales
             FROM Provincia P
@@ -53,4 +54,9 @@ BEGIN
     ELSE
         DBMS_OUTPUT.PUT_LINE('Tipo de consulta no reconocido');
     END IF;
+    
+    --Caputar exception no validado anteriormente
+    EXCEPTION
+    WHEN OTHERS THEN
+        RAISE;
 END;

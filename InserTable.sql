@@ -9,6 +9,9 @@ VALUES (3, 'Said');
 
 INSERT INTO Gerente (idGerente, descGerente) 
 VALUES (4, 'Yuan');
+
+INSERT INTO Gerente (idGerente, descGerente) 
+VALUES (5, 'Julio');
 --------------------------------------------------------
 INSERT INTO Condicion (idCondicion, descCondicion) 
 VALUES (1, 'UNA ESTRELLA');
