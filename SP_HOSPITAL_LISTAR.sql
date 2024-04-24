@@ -1,7 +1,8 @@
-create or replace PROCEDURE SP_CONSULTAR_HOSPITALES
+create or replace NONEDITIONABLE PROCEDURE SP_CONSULTAR_HOSPITALES
     --Definicion de los parametros de entrada
-    (sp_consulta NUMBER)
+    (sp_consulta NUMBER , sp_nombre varchar2)
 IS
+   v_count NUMBER := 0;
 BEGIN
     IF sp_consulta = 1 THEN
 
@@ -10,27 +11,30 @@ BEGIN
             FROM Hospital H
             INNER JOIN Distrito D ON H.idDistrito = D.idDistrito
             INNER JOIN Provincia P ON D.idProvincia = P.idProvincia
-            WHERE P.descProvincia = 'Callao'
+            WHERE UPPER(P.descProvincia) = UPPER(sp_nombre)
         ) LOOP
             DBMS_OUTPUT.PUT_LINE('ID Hospital: ' || i.idHospital || ', Nombre: ' || i.Nombre || ', ID Distrito: ' || i.idDistrito);
+            v_count := v_count + 1;
         END LOOP;
     ELSIF sp_consulta = 2 THEN
 
         FOR i IN (
             SELECT *
             FROM Hospital
-            WHERE UPPER(Nombre) LIKE '%nacional%'
+            WHERE UPPER(Nombre) LIKE '%' || UPPER(sp_nombre) || '%'
         ) LOOP
             DBMS_OUTPUT.PUT_LINE('ID Hospital: ' || i.idHospital || ', Nombre: ' || i.Nombre || ', ID Distrito: ' || i.idDistrito);
+            v_count := v_count + 1;
         END LOOP;
     ELSIF sp_consulta = 3 THEN
 
         FOR i IN (
             SELECT *
             FROM Hospital
-            WHERE LOWER(Nombre) LIKE '%a'
+            WHERE LOWER(Nombre) LIKE '%' || UPPER(sp_nombre) || '%'
         ) LOOP
             DBMS_OUTPUT.PUT_LINE('ID Hospital: ' || i.idHospital || ', Nombre: ' || i.Nombre || ', ID Distrito: ' || i.idDistrito);
+            v_count := v_count + 1;
         END LOOP;
     ELSIF sp_consulta = 4 THEN
 
@@ -39,6 +43,7 @@ BEGIN
             FROM Hospital
         ) LOOP
             DBMS_OUTPUT.PUT_LINE('Nombre en mayúsculas: ' || i.Nombre_Mayuscula);
+            v_count := v_count + 1;
         END LOOP;
     ELSIF sp_consulta = 5 THEN
 
@@ -55,6 +60,10 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Tipo de consulta no reconocido');
     END IF;
     
+    IF v_count = 0 THEN
+        RAISE_APPLICATION_ERROR(-20001, 'No se encontraron resultados para la consulta');
+    END IF;
+
     --Caputar exception no validado anteriormente
     EXCEPTION
     WHEN OTHERS THEN
